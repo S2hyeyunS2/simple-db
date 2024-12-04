@@ -13,6 +13,13 @@ public class simpleDbTest {
         createArticleTable();
     }
 
+    //테스트 완료 후 데이터베이스 연결 닫음
+    //SimpleDb의 close메서드를 호출해 연결 해제 보장
+    @AfterAll
+    public static void afterAll(){
+        simpleDb.close();
+    }
+
     private static void createArticleTable() {
         simpleDb.run("DROP TABLE IF EXISTS article");
 
