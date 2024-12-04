@@ -31,6 +31,7 @@ public class SimpleDb {
     // SQL 실행 메서드
     public void run(String sql) {
         connect(); // 연결 초기화
+
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
