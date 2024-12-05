@@ -78,4 +78,8 @@ public class SimpleDb {
     public boolean selectBoolean(String sql) {
         return (boolean) _run(sql);
     }
+
+    public String selectString(String sql) {
+        return (String) _run(sql);
+    }
 }
