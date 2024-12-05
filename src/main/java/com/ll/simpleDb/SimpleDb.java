@@ -3,6 +3,7 @@ package com.ll.simpleDb;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 
 //final 붙은 것들만 자동으로 생성자가 생긴다
 @RequiredArgsConstructor
@@ -67,6 +68,8 @@ public class SimpleDb {
                     return (T) (Long) resultSet.getLong(1);
                 } else if (cls == Boolean.class) {
                     return (T) (Boolean) resultSet.getBoolean(1);
+                } else if (cls == LocalDateTime.class) {
+                    return (T) resultSet.getTimestamp(1).toLocalDateTime();
                 }
             }
 
@@ -91,5 +94,9 @@ public class SimpleDb {
 
     public long selectLong(String sql) {
         return _run(sql, Long.class);
+    }
+
+    public LocalDateTime selectDatetime(String sql) {
+        return _run(sql,LocalDateTime.class);
     }
 }
