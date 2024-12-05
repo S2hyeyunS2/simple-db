@@ -1,15 +1,25 @@
 package com.ll.simpleDb;
 
+import lombok.RequiredArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//final 붙고 초기화가 안된것들만 생성자 만들어줌 @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class Sql {
-    private String sqlFormat;
+    private final SimpleDb simpleDb;
+    private final StringBuilder sqlFormat;
+
+    public Sql(SimpleDb simpleDb){
+        this.simpleDb=simpleDb;
+        this.sqlFormat=new StringBuilder();
+    }
 
     public Sql append(String sqlBit, Object... params) {
-        this.sqlFormat=sqlBit; //이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
+        this.sqlFormat.append(" " + sqlBit); //이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
         return this;
     }
 
@@ -81,9 +91,6 @@ public class Sql {
     }
 
     public boolean selectBoolean() {
-        if(sqlFormat.equals("SELECT 1 = 1"))
-            return true;
-
-        return false;
+        return simpleDb.selectBoolean(sqlFormat.toString());
     }
 }
