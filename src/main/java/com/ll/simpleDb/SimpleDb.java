@@ -74,12 +74,28 @@ public class SimpleDb {
                     return (T) resultSet.getTimestamp(1).toLocalDateTime();
                 } else if (cls == Map.class) {
                     Map<String, Object> row = new LinkedHashMap<>();
-                    row.put("id", resultSet.getLong("id"));
-                    row.put("createdDate", resultSet.getTimestamp("createdDate").toLocalDateTime());
-                    row.put("modifiedDate", resultSet.getTimestamp("modifiedDate").toLocalDateTime());
-                    row.put("title", resultSet.getString("title"));
-                    row.put("body", resultSet.getString("body"));
-                    row.put("isBlind", resultSet.getBoolean("isBlind"));
+                    ResultSetMetaData metaData = resultSet.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i);
+                        Object value;
+                        switch (metaData.getColumnType(i)) {
+                            case Types.BIGINT:
+                                value = resultSet.getLong(columnName);
+                                break;
+                            case Types.TIMESTAMP:
+                                Timestamp timestamp = resultSet.getTimestamp(columnName);
+                                value = (timestamp != null) ? timestamp.toLocalDateTime() : null;
+                                break;
+                            case Types.BOOLEAN:
+                                value = resultSet.getBoolean(columnName);
+                                break;
+                            default:
+                                value = resultSet.getObject(columnName);
+                                break;
+                        }
+                        row.put(columnName, value);
+                    }
                     return (T) row;
                 }
             }
@@ -111,7 +127,7 @@ public class SimpleDb {
         return _run(sql,LocalDateTime.class);
     }
 
-    public Map<String, Object> selectMap(String sql) {
+    public Map<String, Object> selectRow(String sql) {
         return _run(sql, Map.class);
     }
 }

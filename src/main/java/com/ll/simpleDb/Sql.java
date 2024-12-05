@@ -68,7 +68,7 @@ public class Sql {
     }
 
     public Map<String, Object> selectRow() {
-        return simpleDb.selectMap(sqlFormat.toString().trim());
+        return simpleDb.selectRow(sqlFormat.toString().trim());
     }
 
     public LocalDateTime selectDatetime() {
