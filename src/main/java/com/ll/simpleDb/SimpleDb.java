@@ -2,10 +2,7 @@ package com.ll.simpleDb;
 
 import lombok.RequiredArgsConstructor;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 //final 붙은 것들만 자동으로 생성자가 생긴다
 @RequiredArgsConstructor
@@ -29,11 +26,17 @@ public class SimpleDb {
     }
 
     // SQL 실행 메서드
-    public void run(String sql) {
+    public void run(String sql, Object... params) {
         connect(); // 연결 초기화
 
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(sql);
+
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                preparedStatement.setObject(i + 1, params[i]); // ? 인덱스는 1부터 시작
+            }
+            // SQL 실행
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to execute SQL: " + sql, e);
         }
