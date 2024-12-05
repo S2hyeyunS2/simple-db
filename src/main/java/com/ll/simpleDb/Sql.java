@@ -91,6 +91,6 @@ public class Sql {
     }
 
     public boolean selectBoolean() {
-        return simpleDb.selectBoolean(sqlFormat.toString());
+        return simpleDb.selectBoolean(sqlFormat.toString().trim());
     }
 }
