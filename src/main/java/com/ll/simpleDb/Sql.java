@@ -76,4 +76,8 @@ public class Sql {
     public String selectString() {
         return "제목1";
     }
+
+    public boolean selectBoolean() {
+        return false;
+    }
 }
