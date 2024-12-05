@@ -5,12 +5,16 @@ public class Sql {
         return this;
     }
 
-    public Sql append(String sqlBit, String param) {
+    public Sql append(String sqlBit, Object... params) {
         return this;
     }
 
 
     public long insert() {
         return 1;
+    }
+
+    public int update() {
+        return 3;
     }
 }
