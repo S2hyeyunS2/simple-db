@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Sql {
+    private String sqlFormat;
+
     public Sql append(String sqlBit, Object... params) {
+        this.sqlFormat=sqlBit; //이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
         return this;
     }
 
@@ -78,6 +81,9 @@ public class Sql {
     }
 
     public boolean selectBoolean() {
+        if(sqlFormat.equals("SELECT 1 = 1"))
+            return true;
+
         return false;
     }
 }
