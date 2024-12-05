@@ -51,17 +51,21 @@ public class SimpleDb {
         }
     }
 
-    public Object _run(String sql, Object... params) {
+    public Object _run(String sql, Class cls, Object... params) {
         connect(); // 연결 초기화
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             bindParameters(preparedStatement, params);
 
-            if(sql.startsWith("SELECT")) {
+            if (sql.startsWith("SELECT")) {
                 ResultSet resultSet = preparedStatement.executeQuery();
-
                 resultSet.next();
-                return resultSet.getBoolean(1);
+
+                if (cls == String.class) {
+                    return resultSet.getString(1);
+                } else if (cls == Boolean.class) {
+                    return resultSet.getBoolean(1);
+                }
             }
 
             return preparedStatement.executeUpdate();
@@ -72,14 +76,14 @@ public class SimpleDb {
 
     // SQL 실행 메서드
     public int run(String sql, Object... params) {
-        return (int) _run(sql,params);
+        return (int) _run(sql,Integer.class,params);
     }
 
     public boolean selectBoolean(String sql) {
-        return (boolean) _run(sql);
+        return (boolean) _run(sql, Boolean.class);
     }
 
     public String selectString(String sql) {
-        return (String) _run(sql);
+        return (String) _run(sql, String.class);
     }
 }
