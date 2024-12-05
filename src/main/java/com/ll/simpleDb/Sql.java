@@ -64,4 +64,8 @@ public class Sql {
                 "isBlind",false
             );
     }
+
+    public LocalDateTime selectDatetime() {
+        return LocalDateTime.now();
+    }
 }
