@@ -89,9 +89,6 @@ public class Sql {
 
     public <T> List<T> selectRows(Class<?> cls) {
         return simpleDb
-                .selectRows(toSql(), params.toArray())
-                .stream()
-                .map(row -> (T) Ut.mapper.mapToObj(row, cls))
-                .toList();
+                .selectRows(toSql(), cls, params.toArray());
     }
 }
