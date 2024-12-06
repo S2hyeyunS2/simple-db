@@ -13,18 +13,17 @@ public class SimpleDb {
     private final String username;
     private final String password;
     private final String dbName;
-    private Connection connection;
+    private Map<String, Connection> connections = new HashMap<>();
 
     // 현재는 항상 true로 설정 (개발 환경 확인)
     private boolean isNotProdMode() {
         return true; // 배포 환경에서 false로 설정할 수 있음
     }
 
-    // 데이터베이스 연결 초기화
-    private void connect() {
-        if (connection != null) {
-            return; // 이미 연결되어 있으면 아무 작업도 하지 않음
-        }
+    private Connection getCurrentThreadConnection() {
+        Connection connection=connections.get(Thread.currentThread().getName());
+
+        if(connection !=null) return connection;
 
         String url = String.format("jdbc:mysql://%s/%s?useSSL=false", host, dbName);
         try {
@@ -32,13 +31,16 @@ public class SimpleDb {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to connect to database: " + e.getMessage(), e);
         }
+
+        connections.put(Thread.currentThread().getName(),connection);
+
+        return connection;
     }
 
-    // 자원 해제
-    public void close() {
-        if (connection == null) {
-            return; // 연결이 없는 경우 아무 작업도 하지 않음
-        }
+    private void clearCurrentThreadConnection() {
+        Connection connection=connections.get(Thread.currentThread().getName());
+
+        if(connection==null) return;
 
         try {
             connection.close();
@@ -46,6 +48,13 @@ public class SimpleDb {
             throw new RuntimeException("Failed to close database connection: " + e.getMessage(), e);
         }
     }
+
+    // 자원 해제
+    public void close() {
+        clearCurrentThreadConnection();
+    }
+
+
 
     public Sql genSql() {
         return new Sql(this);
@@ -134,7 +143,6 @@ public class SimpleDb {
 
     // 내부 SQL 실행 메서드
     private <T> T _run(String sql, Class<T> cls, Object... params) {
-        connect();
         sql = sql.trim();
 
         if (isNotProdMode()) {
@@ -142,7 +150,7 @@ public class SimpleDb {
             System.out.println(rawSql(sql, params));
         }
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = getCurrentThreadConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             bindParameters(preparedStatement, params);
 
             if (sql.startsWith("INSERT")) {
