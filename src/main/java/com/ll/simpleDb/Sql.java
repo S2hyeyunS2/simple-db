@@ -1,11 +1,15 @@
 package com.ll.simpleDb;
 
+import com.fasterxml.jackson.core.ObjectCodec;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 //final 붙고 초기화가 안된것들만 생성자 만들어줌 @RequiredArgsConstructor
 @RequiredArgsConstructor
@@ -28,6 +32,14 @@ public class Sql {
         }
 
         return this;
+    }
+
+    public Sql appendIn(String sqlBit, Object... params) {
+        String inClause= IntStream.range(0,params.length).mapToObj(i-> "?")
+                .collect(Collectors.joining(", "));
+        sqlBit=sqlBit.replace("?", inClause);
+
+        return append(sqlBit,params);
     }
 
     private String toSql(){
