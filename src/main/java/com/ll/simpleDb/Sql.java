@@ -12,14 +12,21 @@ import java.util.Map;
 public class Sql {
     private final SimpleDb simpleDb;
     private final StringBuilder sqlFormat;
+    private final List<Object> params;
 
     public Sql(SimpleDb simpleDb){
         this.simpleDb=simpleDb;
         this.sqlFormat=new StringBuilder();
+        this.params=new ArrayList<>();
     }
 
     public Sql append(String sqlBit, Object... params) {
-        this.sqlFormat.append(" " + sqlBit); //이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
+        this.sqlFormat.append(" " + sqlBit);//이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
+
+        for(Object param:params){
+            this.params.add(param);
+        }
+
         return this;
     }
 
@@ -32,7 +39,7 @@ public class Sql {
     }
 
     public int delete() {
-        return 2;
+        return simpleDb.delete(sqlFormat.toString().trim(), params.toArray());
     }
 
     public List<Map<String, Object>> selectRows() {
