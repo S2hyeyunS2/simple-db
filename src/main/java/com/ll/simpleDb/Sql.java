@@ -35,7 +35,7 @@ public class Sql {
     }
 
     public long insert() {
-        return 1;
+        return simpleDb.insert(toSql(), params.toArray());
     }
 
     public int update() {
