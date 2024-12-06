@@ -231,4 +231,20 @@ public class SimpleDb {
                 .map(row -> (Long) row.values().iterator().next())
                 .toList();
     }
+
+    public void startTransaction() {
+        try{
+            getCurrentThreadConnection().setAutoCommit(false); //AutoCommit은 자동 커밋으로 실제 DB에 반영 그러니 false이니까 뒤에 실행되는 쿼리는 반영X
+        } catch (SQLException e){
+            throw new RuntimeException("Failed to start transaction: " + e.getMessage(), e);
+        }
+    }
+
+    public void rollback() {
+        try{
+            getCurrentThreadConnection().rollback();
+        } catch (SQLException e){
+            throw new RuntimeException("Failed to rollback transaction: "+ e.getMessage(),e);
+        }
+    }
 }
