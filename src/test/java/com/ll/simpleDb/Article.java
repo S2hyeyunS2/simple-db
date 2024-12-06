@@ -3,7 +3,6 @@ package com.ll.simpleDb;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Getter
 public class Article {
