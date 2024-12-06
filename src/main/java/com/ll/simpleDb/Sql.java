@@ -91,4 +91,9 @@ public class Sql {
         return simpleDb
                 .selectRows(toSql(), cls, params.toArray());
     }
+
+    public <T> T selectRow(Class<?> cls){
+        return simpleDb.selectRow(toSql(), cls, params.toArray());
+    }
+
 }
