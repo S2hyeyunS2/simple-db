@@ -21,7 +21,7 @@ public class Sql {
     }
 
     public Sql append(String sqlBit, Object... params) {
-        this.sqlFormat.append(" " + sqlBit);//이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
+        this.sqlFormat.append("\n" + sqlBit);//이것을 해야 selectBoolean 메소드에 값을 저장후 받아갈 수 있음
 
         for(Object param:params){
             this.params.add(param);

@@ -118,6 +118,11 @@ public class SimpleDb {
     public <T> T _run(String sql, Class cls, Object... params) {
         connect(); // 연결 초기화
 
+        if(isNotProdMode()){
+            System.out.println("== rawSql ==");
+            System.out.println(sql);
+        }
+
         if(sql.startsWith("INSERT")){
            try(PreparedStatement preparedStatement=connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
                bindParameters(preparedStatement, params);
@@ -151,6 +156,9 @@ public class SimpleDb {
         }
     }
 
+    private boolean isNotProdMode() {
+        return true;
+    }
 
 
     // SQL 실행 메서드
