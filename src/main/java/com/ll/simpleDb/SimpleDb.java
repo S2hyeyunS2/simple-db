@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //final 붙은 것들만 자동으로 생성자가 생긴다
 @RequiredArgsConstructor
@@ -17,6 +14,10 @@ public class SimpleDb {
     private final String password;
     private final String dbName;
     private Connection connection;
+
+    private boolean isNotProdMode() {
+        return true;
+    }
 
     // 데이터베이스 연결 초기화
     private void connect() {
@@ -43,6 +44,28 @@ public class SimpleDb {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to close database connection: " + e.getMessage(), e);
         }
+    }
+
+    // SQL과 파라미터를 입력받아 치환된 SQL 반환
+    private String rawSql(String sql, Object[] params) {
+        StringBuilder processedSql = new StringBuilder(sql);
+        int lastIndex = 0;
+        for (Object param : params) {
+            lastIndex = processedSql.indexOf("?", lastIndex);
+            if (lastIndex == -1) break; // 더 이상 치환할 물음표가 없으면 중단
+            String replacement = formatRawSqlParam(param); // 파라미터 포맷 처리
+            processedSql.replace(lastIndex, lastIndex + 1, replacement);
+            lastIndex += replacement.length();
+        }
+        return processedSql.toString();
+    }
+
+    // 파라미터에 따라 적절한 SQL 값으로 변환
+    private String formatRawSqlParam(Object param) {
+        if (param instanceof Boolean) {
+            return param.toString().toUpperCase(); // Boolean을 대문자로
+        }
+        return "'" + Objects.toString(param, "") + "'"; // 문자열로 변환
     }
 
     public Sql genSql() {
@@ -157,39 +180,6 @@ public class SimpleDb {
             throw new RuntimeException("Failed to execute SQL: " + sql + ". Error: " + e.getMessage(), e);
         }
     }
-
-    private String rawSql(String sql, Object[] params) {
-        StringBuilder processedSql = new StringBuilder(sql);
-
-        int lastIndex=0;
-
-        for(Object param:params){
-            lastIndex=processedSql.indexOf("?", lastIndex);
-
-            if(lastIndex==-1){
-                // 더 이상 치환할 물음표가 없으면 반복 중단
-                break;
-            }
-
-            String replacement;
-
-            //그 외의 경우, 단순 문자열로 변환
-            if(param instanceof Boolean){
-                replacement=param.toString().toUpperCase();
-            } else{
-                replacement="'"+param.toString()+"'";
-            }
-
-            processedSql.replace(lastIndex,lastIndex+1,replacement);
-            lastIndex+=replacement.length();
-        }
-        return processedSql.toString();
-    }
-
-    private boolean isNotProdMode() {
-        return true;
-    }
-
 
     // SQL 실행 메서드
     public int run(String sql, Object... params) {
