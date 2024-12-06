@@ -1,6 +1,7 @@
 package com.ll.simpleDb;
 
 import com.fasterxml.jackson.core.ObjectCodec;
+import com.ll.simpleDb.standard.util.Ut;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -90,7 +91,7 @@ public class Sql {
         return simpleDb
                 .selectRows(toSql(), params.toArray())
                 .stream()
-                .map(row->(T) new Article(row))
+                .map(row -> (T) Ut.mapper.mapToObj(row, cls))
                 .toList();
     }
 }

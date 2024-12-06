@@ -14,12 +14,4 @@ public class Article {
     private String body;
     private boolean isBlind;
 
-    public Article(Map<String, Object> row){
-        this.id=(long) row.get("id");
-        this.createdDate=(LocalDateTime) row.get("createdDate");
-        this.modifiedDate=(LocalDateTime) row.get("modifiedDate");
-        this.title=(String) row.get("title");
-        this.body=(String) row.get("body");
-        this.isBlind=(boolean) row.get("isBlind");
-    }
 }
