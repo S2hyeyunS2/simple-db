@@ -547,5 +547,3 @@ public class simpleDbTest {
     }
 }
 
-
-}
