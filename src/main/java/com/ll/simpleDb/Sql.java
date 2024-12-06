@@ -31,7 +31,7 @@ public class Sql {
     }
 
     private String toSql(){
-        return sqlFormat.toString().trim();
+        return sqlFormat.toString();
     }
 
     public long insert() {
